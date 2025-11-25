@@ -7,6 +7,7 @@ This repository demonstrates a simple GitOps workflow using **Argo CD** to deplo
 Argo CD continuously monitors this Git repository and ensures the Kubernetes cluster always reflects the **desired state** stored in Git.
 
 
+
 ### Architecture Overview
 
 ```
@@ -27,6 +28,8 @@ argocd-nginx-demo/
  ├── deployment.yaml      # NGINX Deployment (2 replicas)
  └── service.yaml         # ClusterIP Service
 ```
+
+
 
 ### Getting Started
 
@@ -70,11 +73,14 @@ Open UI: http://localhost:8080
 #### 4. Connect Git Repository in Argo CD
 
 In Argo CD UI:
+
     Settings -> Repositories -> Connect Repo
+    
     Fill in:
       - Type: Git
       - URL: `https://github.com/<your-user>/argocd-nginx-demo.git`
       - Leave username/password empty for public repo
+      
     Click **CONNECT**
 
 
@@ -101,6 +107,7 @@ Click CREATE, then **SYNC**.
 <img width="1830" height="680" alt="Screenshot 2025-11-25 223051" src="https://github.com/user-attachments/assets/17a5869c-1e9d-4fd4-9301-d1440fe50f1d" />
 
 
+
 ### Drift Detection
 
 Argo CD continuously monitors the Kubernetes cluster and compares it against the **desired state** stored in Git.
@@ -120,6 +127,7 @@ When the live cluster no longer matches the Git-defined state, Argo CD will:
 **Example Argo CD log**
 <img width="946" height="68" alt="image" src="https://github.com/user-attachments/assets/331bc998-9183-46ae-8d1b-dfa80430718c" />
 <img width="953" height="164" alt="image" src="https://github.com/user-attachments/assets/903a0289-542a-4ad6-bdf3-043c1aa87e38" />
+
 
 
 ### Learning Outcomes
