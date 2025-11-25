@@ -1,19 +1,23 @@
 # Argo CD GitOps Demo – NGINX Application
 
+
 ### Overview
+
 This repository demonstrates a simple GitOps workflow using **Argo CD** to deploy and manage an **NGINX application** on a Kubernetes cluster created with kind (Kubernetes in Docker).
 Argo CD continuously monitors this Git repository and ensures the Kubernetes cluster always reflects the **desired state** stored in Git.
 
+
 ### Architecture Overview
+
 ```
-Git Repository (Manifests)
+Git Repository (K8 Manifests)
         ↓
 Argo CD (GitOps Controller)
         ↓
 Kubernetes Cluster (kind)
         ↓
 Deployment → 2 Pods
-Service → ClusterIP
+Service    → ClusterIP
 ```
 
 **Project Structure**
@@ -24,6 +28,7 @@ argocd-nginx-demo/
  └── service.yaml         # ClusterIP Service
 ```
 
+### Getting Started
 
 #### 1. Create a local Kubernetes cluster using kind
 
@@ -68,48 +73,49 @@ In Argo CD UI:
     Settings -> Repositories -> Connect Repo
     Fill in:
       - Type: Git
-      - URL: https://github.com/<your-user>/argocd-nginx-demo.git
+      - URL: `https://github.com/<your-user>/argocd-nginx-demo.git`
       - Leave username/password empty for public repo
-    Click CONNECT
+    Click **CONNECT**
 
 
 #### 5. Create the Argo CD Application
 
-In the Applications -> NEW APP
+Navigate to Applications -> **NEW APP**
+
 **General**
-    - Application Name: nginx-demo
-    - Project: default
-    - Sync Policy: Manual (or Auto later)
+    - Application Name: `nginx-demo`
+    - Project: `default`
+    - Sync Policy: `Manual` (or Auto later)
 
 **Source**
     - Repository URL: choose your repo
-    - Revision: HEAD
+    - Revision: `HEAD`
     - Path: / or the folder containing your manifests
 
 **Destination**
-    - Cluster: https://kubernetes.default.svc
-    - Namespace: default
+    - Cluster: `https://kubernetes.default.svc`
+    - Namespace: `default`
 
-Click CREATE, then SYNC.
+Click CREATE, then **SYNC**.
 
 <img width="1830" height="680" alt="Screenshot 2025-11-25 223051" src="https://github.com/user-attachments/assets/17a5869c-1e9d-4fd4-9301-d1440fe50f1d" />
 
+
 ### Drift Detection
 
-Argo CD continuously compares:
-      * Desired state (Git)
-      * Live state (Cluster)
+Argo CD continuously monitors the Kubernetes cluster and compares it against the **desired state** stored in Git.
+If something in the cluster changes outside of Git (a manual edit, deleted pod, modified config), Argo CD identifies this as **configuration drift**.
 
 To simulate drift:
 ```bash
 kubectl delete pod <pod-name>
 ```
 
-Argo CD will detect drift:
-    - App becomes OutOfSync
-    - Resource turns red in UI
-    - Logs show comparison events
-    - Argo CD restores the missing pod 
+When the live cluster no longer matches the Git-defined state, Argo CD will:
+    - Mark the application state as **OutOfSync**
+    - Highlight the affected resource in red on the Argo CD UI
+    - Record comparison events in the controller logs showing the detected difference
+    - Automatically recreate the missing resource (if auto-sync is enabled), or prompt for a manual SYNC action
 
 **Example Argo CD log**
 <img width="946" height="68" alt="image" src="https://github.com/user-attachments/assets/331bc998-9183-46ae-8d1b-dfa80430718c" />
@@ -117,8 +123,8 @@ Argo CD will detect drift:
 
 
 ### Learning Outcomes
-        * Gained a solid understanding of GitOps principles and how they streamline Kubernetes application delivery.
-        * Learned how Argo CD continuously reconciles the desired state in Git with the live state in the cluster.
-        * Observed drift detection in action and saw how Argo CD restores configuration consistency through automated reconciliation.
-        * Gained hands-on experience deploying workloads through the Argo CD UI and managing changes through Git-driven workflows.
+        - Gained a solid understanding of GitOps principles and how they streamline Kubernetes application delivery.
+        - Learned how Argo CD continuously reconciles the desired state in Git with the live state in the cluster.
+        - Observed drift detection in action and saw how Argo CD restores configuration consistency through automated reconciliation.
+        - Gained hands-on experience deploying workloads through the Argo CD UI and managing changes through Git-driven workflows.
 
